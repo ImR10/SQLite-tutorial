@@ -40,15 +40,39 @@ c.executemany("INSERT INTO customers VALUES (?,?,?,?)", customers)
 # 'rowid' is the default primary key
 # c.execute("SELECT rowid, * FROM customers")
 
+# helper function to print all items (formatted)
+def print_fetch(prompt, items):
+    print("\n", prompt)
+    for item in items:
+        print(f"{item[0]} {item[1]} \t({item[2]})")
+
+# original records
+c.execute("SELECT * FROM customers")
+print_fetch("Current Records:", c.fetchall())
+
+# update records
+# update and delete records using rowid's
+c.execute("""UPDATE customers SET first_name = "Rizzy"
+            WHERE rowid = "1"
+    """)
+# delete records
+c.execute("DELETE FROM customers WHERE rowid = 2")
+
+c.execute("SELECT * FROM customers")
+print_fetch("Updated Records:", c.fetchall())
+
+
 # query specific item
 c.execute("SELECT * FROM customers WHERE last_name = 'Hoque'")
+print_fetch("Last Names with \"Hoque\":", c.fetchall())
 c.execute("SELECT * FROM customers WHERE age < 20")
-c.execute("SELECT * FROM customers WHERE last_name LIKE '%B'")
+print_fetch("Ages < 20:", c.fetchall())
+c.execute("SELECT * FROM customers WHERE email LIKE '%gmail.com'")
+print_fetch("Employees with gmails:", c.fetchall())
 
-items = c.fetchall()
-print("First/Last Name \t Email")
-for item in items:
-    print(f"{item[0]} {item[1]} \t({item[2]})")
+# order results
+c.execute("SELECT * FROM customers ORDER BY last_name")
+print_fetch("Order by last name:", c.fetchall())
 
 # commit the connection 
 connect.commit()
